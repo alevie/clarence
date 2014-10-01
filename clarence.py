@@ -1,3 +1,7 @@
+#! /usr/env python
+# Purpose:        Provide a continuous text-to-speech prompt for espeak
+# Requirements:   Python standard libraries
+
 import cmd
 import os
 import subprocess
@@ -24,12 +28,13 @@ class CLI(cmd.Cmd):
 
   def say(self,line):
     line = line.lower()
-    line = line.replace('adalyn','addalynn') # Use these lines to teach clarence to pronunciation
+    line = line.replace('adalyn','addalynn') # Use these lines to correct pronunciation
     args = ['espeak', '-v', 'en-us', '-a', '200', '-s', '150', '"%s"' % line]
     subprocess.call(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def which(program):
+  # Checks to see if function exists
   def is_exe(fpath):
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
   fpath, fname = os.path.split(program)
@@ -47,15 +52,16 @@ def which(program):
 
 def main():
   os.system('clear')
+  # Check if espeak is installed
   if which('espeak') is None:
     sys.exit('espeak is not installed')
+  # Ensure script is run as root
   if not os.geteuid() == 0:
     sys.exit('Script must be run as root')
   try:
     foo = CLI()
     foo.cmdloop()
   except: #catch ctrl-c event to exit
-    print ''
     pass
 
 
